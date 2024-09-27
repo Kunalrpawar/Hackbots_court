@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commercial Court AI Outcome Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/kunal.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Commercial Court AI Outcome Predictor</h1>
+        <form method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="case_id">Case ID</label>
+                    <input type="text" id="case_id" name="case_id" required>
+                </div>
+                <div class="form-group">
+                    <label for="case_type">Case Type</label>
+                    <input type="text" id="case_type" name="case_type" required>
+                </div>
+                <div class="form-group">
+                    <label for="plaintiff_name">Plaintiff Name</label>
+                    <input type="text" id="plaintiff_name" name="plaintiff_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="plaintiff_args">Plaintiff Arguments</label>
+                    <textarea id="plaintiff_args" name="plaintiff_args" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="defendant_name">Defendant Name</label>
+                    <input type="text" id="defendant_name" name="defendant_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="defendant_args">Defendant Arguments</label>
+                    <textarea id="defendant_args" name="defendant_args" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="date_filed">Date Filed</label>
+                    <input type="date" id="date_filed" name="date_filed" required>
+                </div>
+                <div class="form-group">
+                    <label for="judge_name">Judge Name</label>
+                    <input type="text" id="judge_name" name="judge_name" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="court_name">Court Name</label>
+                    <input type="text" id="court_name" name="court_name" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="legal_principles">Legal Principles</label>
+                    <textarea id="legal_principles" name="legal_principles" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="submit-button">Get Prediction</button>
+            </div>
+        </form>
+
+        {% if prompt and response %}
+        <div class="result-section">
+            <h2>Prompt Sent to AI:</h2>
+            <pre>{{ prompt }}</pre>
+            <h2>AI Predicted Judgment:</h2>
+            <pre>{{ response }}</pre>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

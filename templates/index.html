@@ -3,212 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commercial Court Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
+    <title>Court Case Outcome Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="flex h-screen bg-gray-100">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white shadow-md hidden md:block">
-            <div class="p-4">
-                <h1 class="text-2xl font-bold text-gray-800">Court Analysis</h1>
-            </div>
-            <nav class="mt-4">
-                <button class="btn btn-default w-full justify-start">
-                    <i data-lucide="bar-chart-3" class="mr-2 h-4 w-4"></i>
-                    Dashboard
-                </button>
-                <button class="btn btn-ghost w-full justify-start">
-                    <i data-lucide="file-text" class="mr-2 h-4 w-4"></i>
-                    Cases
-                </button>
-                <button class="btn btn-ghost w-full justify-start">
-                    <i data-lucide="users" class="mr-2 h-4 w-4"></i>
-                    Parties
-                </button>
-            </nav>
-            <!-- Small Calendar -->
-            <div class="mt-4 p-4">
-                <h3 class="text-sm font-medium text-gray-600 mb-2">Court Calendar</h3>
-                <div id="small-calendar"></div>
-            </div>
-        </aside>
+    <h1>Court Case Outcome Prediction</h1>
 
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto">
-            <!-- Header -->
-            <header class="bg-white shadow-sm p-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold text-gray-800">Commercial Court Analysis</h2>
-                    <div class="relative">
-                        <i data-lucide="search" class="absolute left-2 top-2.5 h-4 w-4 text-gray-500"></i>
-                        <input type="search" placeholder="Search cases..." class="pl-8 w-64 input">
-                    </div>
-                </div>
-            </header>
+    <form method="POST">
+        <label for="case_title">Case Title:</label><br>
+        <input type="text" id="case_title" name="case_title" required><br>
 
-            <!-- Content -->
-            <div class="p-6">
-                <div class="tabs">
-                    <button class="tab-active">Dashboard</button>
-                    <button>Cases</button>
-                </div>
-                <div class="tab-content">
-                    <!-- Input Form -->
-                    <div class="card mb-6">
-                        <div class="card-header">
-                            <h3 class="card-title">Add New Case</h3>
-                        </div>
-                        <div class="card-content">
-                            <form>
-                                <div class="form-group mb-4">
-                                    <label for="caseTitle" class="block text-gray-700">Case Title</label>
-                                    <input type="text" id="caseTitle" class="input w-full" placeholder="Enter case title">
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label for="caseDate" class="block text-gray-700">Date Filed</label>
-                                    <input type="date" id="caseDate" class="input w-full">
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label for="caseType" class="block text-gray-700">Case Type</label>
-                                    <input type="text" id="caseType" class="input w-full" placeholder="Enter case type">
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label for="courtName" class="block text-gray-700">Court Name</label>
-                                    <input type="text" id="courtName" class="input w-full" placeholder="Enter court name">
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label for="plaintiff" class="block text-gray-700">Plaintiff</label>
-                                    <input type="text" id="plaintiff" class="input w-full" placeholder="Enter plaintiff's name">
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label for="defendant" class="block text-gray-700">Defendant</label>
-                                    <input type="text" id="defendant" class="input w-full" placeholder="Enter defendant's name">
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label for="caseOutcome" class="block text-gray-700">Case Outcome Prediction</label>
-                                    <textarea id="caseOutcome" class="input w-full" rows="4" placeholder="Enter case outcome prediction"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-default w-full">Add Case</button>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <!-- Dashboard Cards -->
-                    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Total Cases</h3>
-                                <i data-lucide="file-text" class="h-4 w-4 text-muted-foreground"></i>
-                            </div>
-                            <div class="card-content">
-                                <div class="text-2xl font-bold">1,234</div>
-                                <p class="text-xs text-muted-foreground">+20.1% from last month</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Average Duration</h3>
-                                <i data-lucide="calendar" class="h-4 w-4 text-muted-foreground"></i>
-                            </div>
-                            <div class="card-content">
-                                <div class="text-2xl font-bold">6.2 months</div>
-                                <p class="text-xs text-muted-foreground">-2.5% from last month</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Top Industry</h3>
-                                <i data-lucide="briefcase" class="h-4 w-4 text-muted-foreground"></i>
-                            </div>
-                            <div class="card-content">
-                                <div class="text-2xl font-bold">Technology</div>
-                                <p class="text-xs text-muted-foreground">32% of all cases</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Active Judges</h3>
-                                <i data-lucide="users" class="h-4 w-4 text-muted-foreground"></i>
-                            </div>
-                            <div class="card-content">
-                                <div class="text-2xl font-bold">24</div>
-                                <p class="text-xs text-muted-foreground">+2 from last month</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Chart Section -->
-                    <div class="card mt-6">
-                        <div class="card-header">
-                            <h3 class="card-title">Case Distribution by Industry</h3>
-                        </div>
-                        <div class="card-content">
-                            <canvas id="industryChart" width="400" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-    <script>
-        lucide.createIcons();
+        <label for="date_filed">Date Filed:</label><br>
+        <input type="date" id="date_filed" name="date_filed" required><br>
 
-        // Chart.js implementation
-        const ctx = document.getElementById('industryChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Technology', 'Finance', 'Healthcare', 'Real Estate', 'Energy', 'Others'],
-                datasets: [{
-                    label: 'Number of Cases',
-                    data: [320, 280, 160, 140, 120, 214],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+        <label for="case_type">Case Type:</label><br>
+        <input type="text" id="case_type" name="case_type" required><br>
 
-        // FullCalendar implementation
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('small-calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: [
-                    { title: 'Case A', start: '2024-09-10' },
-                    { title: 'Case B', start: '2024-09-15' },
-                    { title: 'Case C', start: '2024-09-20' }
-                ]
-            });
-            calendar.render();
-        });
-    </script>
+        <label for="plaintiff">Plaintiff:</label><br>
+        <input type="text" id="plaintiff" name="plaintiff" required><br>
+
+        <label for="defendant">Defendant:</label><br>
+        <input type="text" id="defendant" name="defendant" required><br><br>
+
+        <input type="submit" value="Predict Outcome">
+    </form>
+
+    {% if prediction %}
+    <h2>Prediction</h2>
+    <p>{{ prediction }}</p>
+    {% endif %}
+
 </body>
 </html>
