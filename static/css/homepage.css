@@ -25,13 +25,13 @@ h1, h2, h3 {
 }
 
 a {
-    color: #14509e;
+    color: #1a4782;
     text-decoration: none;
 }
 
 /* Header */
 header {
-    background-color: #e60b84;
+    background-color: #362dae;
     color: #fff;
     padding: 20px 0;
 }
@@ -79,17 +79,17 @@ nav ul li a {
 }
 
 .btn-primary {
-    background-color: #1a73e8;
+    background-color: #1b447b;
     color: #fff;
 }
 
 .btn-primary:hover {
-    background-color: #1557b0;
+    background-color: #0e1e34;
 }
 
 .btn-secondary {
     background-color: #fff;
-    color: #1a73e8;
+    color: #142c4b;
 }
 
 .btn-secondary:hover {
@@ -98,8 +98,8 @@ nav ul li a {
 
 .btn-outline {
     background-color: transparent;
-    border: 1px solid #1a73e8;
-    color: #1a73e8;
+    border: 1px solid #183254;
+    color: #122846;
 }
 
 .btn-outline:hover {
@@ -168,7 +168,7 @@ nav ul li a {
 
 /* Footer */
 footer {
-    background-color: #1a73e8;
+    background-color: #10243e;
     color: #fff;
     padding: 40px 0 20px;
 }
@@ -233,7 +233,7 @@ footer {
     justify-content: center;
     align-items: center;
     margin-bottom: 30px;
-    color: #1a73e8;
+    color: #102642;
 }
 
 .login-container h1 {

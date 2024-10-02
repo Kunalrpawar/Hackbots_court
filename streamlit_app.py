@@ -36,7 +36,7 @@ def predict_case_outcome(case_details):
 
 # Route for the main form page
 @app.route('/', methods=['GET', 'POST'])
-def index():
+def kunal():
     if request.method == 'POST':
         # Collect form data
         case_title = request.form.get('case_title')

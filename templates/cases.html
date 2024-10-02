@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cases - Commercial Court</title>
-    <link rel="stylesheet" href="cases.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cases.css') }}">
 </head>
 <body>
     <header>
         <div class="container">
             <nav>
-                <a href="homepage.html" class="logo">
+                <a href="{{ url_for('welcome') }}" class="logo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="m12 3 10 7.5-10 7.5L2 10.5 12 3"/><path d="M2 20.5 12 13l10 7.5"/></svg>
                     <span>Commercial Court</span>
                 </a>
                 <ul>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="cases.html" class="active">Cases</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                    <li><a href="login.html" class="btn btn-secondary">Login</a></li>
+                    <li><a href="{{ url_for('welcome') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                    <li><a href="{{ url_for('services') }}">Services</a></li>
+                    <li><a href="{{ url_for('cases') }}">Cases</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -56,13 +56,13 @@
                         <tbody>
                             <tr>
                                 <td><a href="#case-2023-001">2023-001</a></td>
-                                <td>Pratham  v. Johnson LLC</td>
+                                <td>Mahindra Motors</td>
                                 <td>2023-05-15</td>
                                 <td>Ongoing</td>
                             </tr>
                             <tr>
                                 <td><a href="#case-2023-002">2023-002</a></td>
-                                <td>Tech Innovations Inc. v. Global Systems</td>
+                                <td>Tech Innovations Inc</td>
                                 <td>2023-05-20</td>
                                 <td>Scheduled</td>
                             </tr>

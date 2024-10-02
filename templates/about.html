@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - Commercial Court</title>
-    <link rel="stylesheet" href="about.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
 </head>
 <body>
     <header>
         <div class="container">
             <nav>
-                <a href="homepage.html" class="logo">
+                <a href="{{ url_for('welcome') }}" class="logo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="m12 3 10 7.5-10 7.5L2 10.5 12 3"/><path d="M2 20.5 12 13l10 7.5"/></svg>
                     <span>Commercial Court</span>
                 </a>
                 <ul>
-                    <li><a href="about.html" class="active">About</a></li>
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="cases.html">Cases</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                    <li><a href="login.html" class="btn btn-secondary">Login</a></li>
+                    <li><a href="{{ url_for('welcome') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('services') }}">Services</a></li>
+            <li><a href="{{ url_for('cases') }}">Cases</a></li>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -44,7 +44,9 @@
                         <p>Our court specializes in a wide range of commercial disputes, including contract disagreements, intellectual property rights, corporate governance issues, and international trade conflicts. We continuously update our knowledge and procedures to stay current with evolving business practices and laws.</p>
                     </div>
                     <div class="about-image">
-                        <img src="https://ik.imagekit.io/0qlf5pqwx/v0_images/courthouse.jpg?updatedAt=1685715452937" alt="Commercial Court building" width="400" height="300">
+                        <img src="{{ url_for('static', filename='img/supreme.jpg') }}" alt="Supreme Image" width="600" height="00">
+
+
                     </div>
                 </div>
             </div>
@@ -55,18 +57,18 @@
                 <h2>Our Leadership</h2>
                 <div class="team-grid">
                     <div class="team-member">
-                        <img src="https://ik.imagekit.io/0qlf5pqwx/v0_images/judge1.jpg?updatedAt=1685715452937" alt="Judge Sarah Johnson" width="200" height="200">
-                        <h3>Judge Sarah Johnson</h3>
+                       
+                        <h3>Pratham Kokardekar</h3>
                         <p>Chief Justice</p>
                     </div>
                     <div class="team-member">
-                        <img src="https://ik.imagekit.io/0qlf5pqwx/v0_images/judge2.jpg?updatedAt=1685715452937" alt="Judge Michael Chen" width="200" height="200">
-                        <h3>Judge Michael Chen</h3>
+                       
+                        <h3>Sahil Kulkarni</h3>
                         <p>Associate Justice</p>
                     </div>
                     <div class="team-member">
-                        <img src="https://ik.imagekit.io/0qlf5pqwx/v0_images/judge3.jpg?updatedAt=1685715452937" alt="Judge Emily Rodriguez" width="200" height="200">
-                        <h3>Judge Emily Rodriguez</h3>
+                        
+                        <h3>Varad Raut</h3>
                         <p>Associate Justice</p>
                     </div>
                 </div>

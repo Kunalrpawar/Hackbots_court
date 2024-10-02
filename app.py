@@ -1,77 +1,85 @@
 from flask import Flask, render_template, request, jsonify
-import google.generativeai as genai
-from dotenv import load_dotenv
-import os
-import joblib
-import pandas as pd
+import requests
 
 app = Flask(__name__)
 
-# Load environment variables from .env file
-load_dotenv()
+@app.route('/')
+def welcome():
+    return render_template('homepage.html')
 
-# Configure the Gemini API client
-api_key = os.getenv("GOOGLE_API_KEY")
-if api_key:
-    genai.configure(api_key=api_key)
-else:
-    raise ValueError("API key not found! Please set the GOOGLE_API_KEY in your environment.")
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
-# Initialize the Gemini Pro model
-model = genai.GenerativeModel("gemini-pro")
+@app.route('/services')
+def services():
+    return render_template('services.html')
 
-# Load your ML models and encoders
-# le_case_type = joblib.load('models/label_encoder_case_type.pkl')
-# le_plaintiff = joblib.load('models/label_encoder_plaintiff.pkl')
-# le_defendant = joblib.load('models/label_encoder_defendant.pkl')
-# case_outcome_model = joblib.load('models/case_outcome_model.pkl')
+@app.route('/cases')
+def cases():
+    return render_template('cases.html')
 
-# Function to preprocess input data for prediction
-def preprocess_input(input_data):
-    input_data['Case Type'] = le_case_type.transform([input_data['Case Type']])
-    input_data['Plaintiff'] = le_plaintiff.transform([input_data['Plaintiff']])
-    input_data['Defendant'] = le_defendant.transform([input_data['Defendant']])
-    input_data['Date Filed'] = pd.to_datetime(input_data['Date Filed']).timestamp()
-    return pd.DataFrame(input_data)
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
-# Route for homepage
-@app.route("/")
-def home():
-    return render_template("index.html")
+@app.route('/login')
+def login():
+    return render_template('login.html')
 
-# API route for case prediction
-@app.route("/predict", methods=["POST"])
-def predict():
-    try:
-        input_data = {
-            'Case Title': request.form['case_title'],
-            'Date Filed': request.form['date_filed'],
-            'Case Type': request.form['case_type'],
-            'Court Name': request.form['court_name'],
-            'Plaintiff': request.form['plaintiff'],
-            'Defendant': request.form['defendant']
-        }
-        
-        preprocessed_input = preprocess_input(input_data)
-        prediction = case_outcome_model.predict(preprocessed_input)
-        
-        return jsonify({"outcome": prediction[0]})
-    
-    except Exception as e:
-        return jsonify({"error": str(e)})
+@app.route('/ai_model', methods=['GET'])
+def ai_model():
+    return render_template('kunal.html')  # AI model page
 
-# API route for chatbot
-@app.route("/chat", methods=["POST"])
-def chat():
-    user_input = request.json.get("message")
-    if not user_input:
-        return jsonify({"error": "No input provided"}), 400
+@app.route('/', methods=['POST'])
+def predict_case():
+    # Extract form data
+    case_id = request.form.get('case_id')
+    case_type = request.form.get('case_type')
+    plaintiff_name = request.form.get('plaintiff_name')
+    plaintiff_args = request.form.get('plaintiff_args')
+    defendant_name = request.form.get('defendant_name')
+    defendant_args = request.form.get('defendant_args')
+    date_filed = request.form.get('date_filed')
+    legal_principles = request.form.get('legal_principles')
+    judge_name = request.form.get('judge_name')
+    court_name = request.form.get('court_name')
+
+    # Example API call
+    api_url = "https://api.gemini.example/predict"  # Replace with your actual API URL
+    payload = {
+        "case_id": case_id,
+        "case_type": case_type,
+        "plaintiff_name": plaintiff_name,
+        "plaintiff_args": plaintiff_args,
+        "defendant_name": defendant_name,
+        "defendant_args": defendant_args,
+        "date_filed": date_filed,
+        "legal_principles": legal_principles,
+        "judge_name": judge_name,
+        "court_name": court_name
+    }
 
     try:
-        response = model.generate_content(user_input)
-        return jsonify({"response": response.text})
+        response = requests.post(api_url, json=payload)
+        response.raise_for_status()  # Raise an error for bad responses
+        api_data = response.json()
+        
+        ipc_response = api_data.get('ipc_sections', 'No IPC sections predicted.')
+        overall_response = api_data.get('judgment', 'No judgment predicted.')
+    except requests.exceptions.RequestException as e:
+        print("API Request Error:", e)
+        ipc_response = "Error calling API"
+        overall_response = "Error calling API"
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print("An unexpected error occurred:", e)
+        ipc_response = "An unexpected error occurred."
+        overall_response = "An unexpected error occurred."
 
-if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+    return jsonify({
+        'ipc_response': ipc_response,
+        'response': overall_response
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
