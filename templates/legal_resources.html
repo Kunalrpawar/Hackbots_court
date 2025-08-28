@@ -1,0 +1,269 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Legal Resources</h1>
+    
+    <!-- Search Bar -->
+    <div class="max-w-2xl mx-auto mb-8">
+        <div class="relative">
+            <input 
+                type="text" 
+                id="searchInput"
+                placeholder="Search legal resources, forms, and guides..."
+                class="w-full p-4 pl-12 text-lg border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            >
+            <svg class="absolute left-4 top-4 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+    </div>
+    
+    <!-- Resource Categories -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Legal Forms</h2>
+            <ul class="space-y-3" id="formsContent">
+                <!-- Forms will be populated here -->
+            </ul>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Practice Guides</h2>
+            <ul class="space-y-3" id="guidesContent">
+                <!-- Guides will be populated here -->
+            </ul>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Reference Materials</h2>
+            <ul class="space-y-3" id="referenceContent">
+                <!-- Reference materials will be populated here -->
+            </ul>
+        </div>
+    </div>
+    
+    <!-- FAQ Section -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-semibold mb-6">Frequently Asked Questions</h2>
+        <div class="space-y-4" id="faqContent">
+            <!-- FAQs will be populated here -->
+        </div>
+    </div>
+</div>
+
+<script>
+// Mock data for legal resources
+const legalResources = {
+    forms: [
+        {
+            title: 'Commercial Case Filing Form',
+            type: 'PDF',
+            size: '245 KB',
+            url: '/static/forms/commercial_case_filing.pdf'
+        },
+        {
+            title: 'Affidavit Template',
+            type: 'DOCX',
+            size: '125 KB',
+            url: '/static/forms/affidavit_template.docx'
+        },
+        {
+            title: 'Evidence Submission Form',
+            type: 'PDF',
+            size: '180 KB',
+            url: '/static/forms/evidence_submission.pdf'
+        }
+    ],
+    guides: [
+        {
+            title: 'Guide to Commercial Litigation',
+            description: 'Comprehensive guide for commercial case procedures',
+            url: '/guides/commercial-litigation'
+        },
+        {
+            title: 'Contract Dispute Resolution',
+            description: 'Best practices for resolving contract disputes',
+            url: '/guides/contract-disputes'
+        },
+        {
+            title: 'Court Procedures Handbook',
+            description: 'Step-by-step guide to court procedures',
+            url: '/guides/court-procedures'
+        }
+    ],
+    references: [
+        {
+            title: 'Commercial Courts Act',
+            description: 'Full text with annotations',
+            url: '/references/commercial-courts-act'
+        },
+        {
+            title: 'Case Law Database',
+            description: 'Searchable database of precedents',
+            url: '/references/case-law'
+        },
+        {
+            title: 'Legal Terms Glossary',
+            description: 'Definitions of common legal terms',
+            url: '/references/glossary'
+        }
+    ],
+    faqs: [
+        {
+            question: 'What types of cases can be filed in Commercial Courts?',
+            answer: 'Commercial Courts handle cases related to commercial disputes, including business contracts, intellectual property rights, and corporate matters with a specified monetary value.'
+        },
+        {
+            question: 'How long does it take to process a case filing?',
+            answer: 'Typically, case filing processing takes 2-3 business days. However, complex cases or incomplete documentation may require additional time.'
+        },
+        {
+            question: 'What documents are required for filing a commercial case?',
+            answer: 'Required documents include the complaint petition, supporting evidence, proof of payment of court fees, and any relevant contracts or agreements.'
+        }
+    ]
+};
+
+// Function to display forms
+function displayForms() {
+    const formsHtml = legalResources.forms.map(form => `
+        <li class="flex items-center justify-between">
+            <div>
+                <span class="font-medium">${form.title}</span>
+                <span class="text-sm text-gray-500 ml-2">(${form.size})</span>
+            </div>
+            <a href="${form.url}" class="text-blue-500 hover:text-blue-600" download>
+                Download ${form.type}
+            </a>
+        </li>
+    `).join('');
+    
+    document.getElementById('formsContent').innerHTML = formsHtml;
+}
+
+// Function to display guides
+function displayGuides() {
+    const guidesHtml = legalResources.guides.map(guide => `
+        <li>
+            <a href="${guide.url}" class="block hover:bg-gray-50 p-2 rounded">
+                <div class="font-medium">${guide.title}</div>
+                <div class="text-sm text-gray-500">${guide.description}</div>
+            </a>
+        </li>
+    `).join('');
+    
+    document.getElementById('guidesContent').innerHTML = guidesHtml;
+}
+
+// Function to display reference materials
+function displayReferences() {
+    const referencesHtml = legalResources.references.map(ref => `
+        <li>
+            <a href="${ref.url}" class="block hover:bg-gray-50 p-2 rounded">
+                <div class="font-medium">${ref.title}</div>
+                <div class="text-sm text-gray-500">${ref.description}</div>
+            </a>
+        </li>
+    `).join('');
+    
+    document.getElementById('referenceContent').innerHTML = referencesHtml;
+}
+
+// Function to display FAQs
+function displayFAQs() {
+    const faqsHtml = legalResources.faqs.map((faq, index) => `
+        <div class="border-b border-gray-200 pb-4">
+            <button 
+                class="faq-question w-full text-left font-medium"
+                onclick="toggleFAQ(${index})"
+            >
+                ${faq.question}
+            </button>
+            <div class="faq-answer hidden mt-2 text-gray-600">
+                ${faq.answer}
+            </div>
+        </div>
+    `).join('');
+    
+    document.getElementById('faqContent').innerHTML = faqsHtml;
+}
+
+// Function to toggle FAQ answers
+function toggleFAQ(index) {
+    const answers = document.querySelectorAll('.faq-answer');
+    answers[index].classList.toggle('hidden');
+}
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    // Filter and highlight matching content
+    searchResources(searchTerm);
+});
+
+function searchResources(term) {
+    if (!term) {
+        // Reset to show all content if search is empty
+        displayForms();
+        displayGuides();
+        displayReferences();
+        displayFAQs();
+        return;
+    }
+    
+    // Filter forms
+    const matchedForms = legalResources.forms.filter(form => 
+        form.title.toLowerCase().includes(term)
+    );
+    
+    // Filter guides
+    const matchedGuides = legalResources.guides.filter(guide => 
+        guide.title.toLowerCase().includes(term) || 
+        guide.description.toLowerCase().includes(term)
+    );
+    
+    // Filter references
+    const matchedRefs = legalResources.references.filter(ref => 
+        ref.title.toLowerCase().includes(term) || 
+        ref.description.toLowerCase().includes(term)
+    );
+    
+    // Filter FAQs
+    const matchedFAQs = legalResources.faqs.filter(faq => 
+        faq.question.toLowerCase().includes(term) || 
+        faq.answer.toLowerCase().includes(term)
+    );
+    
+    // Update the display with filtered results
+    document.getElementById('formsContent').innerHTML = matchedForms.map(form => `
+        <li class="flex items-center justify-between">
+            <div>
+                <span class="font-medium">${highlightText(form.title, term)}</span>
+                <span class="text-sm text-gray-500 ml-2">(${form.size})</span>
+            </div>
+            <a href="${form.url}" class="text-blue-500 hover:text-blue-600" download>
+                Download ${form.type}
+            </a>
+        </li>
+    `).join('');
+    
+    // Similar updates for other sections...
+}
+
+function highlightText(text, term) {
+    if (!term) return text;
+    const regex = new RegExp(`(${term})`, 'gi');
+    return text.replace(regex, '<mark class="bg-yellow-200">$1</mark>');
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    displayForms();
+    displayGuides();
+    displayReferences();
+    displayFAQs();
+});
+</script>
+{% endblock %}

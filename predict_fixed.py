@@ -1,4 +1,8 @@
 import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
 import joblib
 import os
 
@@ -30,14 +34,13 @@ def preprocess_input(input_data):
         try:
             processed_data['Case Type'] = le_case_type.transform(processed_data['Case Type'].astype(str))
         except ValueError:
-            # Handle unseen categories
             processed_data['Case Type'] = 0  # Default encoding
             
         try:
             processed_data['Court Name'] = le_court.transform(processed_data['Court Name'].astype(str))
         except ValueError:
             processed_data['Court Name'] = 0
-            
+
         try:
             processed_data['Plaintiff'] = le_plaintiff.transform(processed_data['Plaintiff'].astype(str))
         except ValueError:
@@ -65,7 +68,7 @@ def predict_outcome(input_data):
         # Check if model exists
         model_path = 'models/case_outcome_model.pkl'
         if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Model file not found: {model_path}")
+            raise FileNotFoundError(f"Model not found at {model_path}. Please train the model first.")
         
         # Load model
         model = joblib.load(model_path)
@@ -87,7 +90,7 @@ def predict_outcome_with_confidence(input_data):
         # Check if model exists
         model_path = 'models/case_outcome_model.pkl'
         if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Model file not found: {model_path}")
+            raise FileNotFoundError(f"Model not found at {model_path}. Please train the model first.")
         
         # Load model
         model = joblib.load(model_path)
@@ -99,12 +102,10 @@ def predict_outcome_with_confidence(input_data):
         prediction = model.predict(preprocessed_input)
         probabilities = model.predict_proba(preprocessed_input)
         
-        # Get confidence for predicted class
-        confidence = max(probabilities[0])
-        
+        # Convert numpy types to Python native types for JSON serialization
         return {
             'prediction': prediction[0],
-            'confidence': confidence,
+            'confidence': float(np.max(probabilities[0])),
             'probabilities': probabilities[0]
         }
         

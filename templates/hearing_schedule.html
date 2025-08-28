@@ -1,0 +1,202 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Hearing Schedule</h1>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Calendar Section -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow p-4">
+                <div id="calendar"></div>
+            </div>
+        </div>
+
+        <!-- Scheduling Form -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-lg font-semibold mb-4">Schedule Hearing</h3>
+                <form id="hearingForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Date</label>
+                        <input type="date" id="hearingDate" class="form-input w-full" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Time Slot</label>
+                        <select id="timeSlot" class="form-select w-full" required>
+                            <option value="">Select time</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="09:30">09:30 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="10:30">10:30 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="11:30">11:30 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="14:30">02:30 PM</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="15:30">03:30 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Case ID</label>
+                        <input type="text" id="caseId" class="form-input w-full" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Description</label>
+                        <textarea id="description" class="form-textarea w-full h-24"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Email for Notifications</label>
+                        <input type="email" id="email" class="form-input w-full" required>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="btn bg-blue-500 text-white px-6 py-2 rounded-lg">
+                            Schedule Hearing
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+                <div class="space-y-2">
+                    <button onclick="syncCalendar()" class="w-full py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600">
+                        Sync with Calendar
+                    </button>
+                    <button onclick="requestReschedule()" class="w-full py-2 px-4 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                        Request Reschedule
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include FullCalendar library -->
+<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.4.0/main.min.css' rel='stylesheet' />
+<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.4.0/main.min.css' rel='stylesheet' />
+<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.4.0/main.min.css' rel='stylesheet' />
+
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.4.0/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.4.0/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.4.0/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.4.0/main.min.js'></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize calendar
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: ['dayGrid', 'timeGrid', 'interaction'],
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        defaultView: 'dayGridMonth',
+        editable: true,
+        selectable: true,
+        selectMirror: true,
+        eventLimit: true,
+        events: [], // Will be populated from backend
+        select: function(info) {
+            document.getElementById('hearingDate').value = info.startStr;
+        }
+    });
+    
+    calendar.render();
+    
+    // Handle form submission
+    document.getElementById('hearingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            date: document.getElementById('hearingDate').value,
+            time: document.getElementById('timeSlot').value,
+            caseId: document.getElementById('caseId').value,
+            description: document.getElementById('description').value,
+            email: document.getElementById('email').value
+        };
+        
+        // Add event to calendar
+        calendar.addEvent({
+            title: `Hearing: ${formData.caseId}`,
+            start: `${formData.date}T${formData.time}`,
+            end: `${formData.date}T${formData.time}`,
+            description: formData.description
+        });
+        
+        // Send to backend
+        fetch('/schedule_hearing', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Hearing scheduled successfully!');
+                // Send email notification (placeholder)
+                alert(`Notification will be sent to ${formData.email}`);
+            } else {
+                alert('Error scheduling hearing: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error scheduling hearing: ' + error);
+        });
+        
+        this.reset();
+    });
+});
+
+function syncCalendar() {
+    // Placeholder for calendar sync
+    const provider = prompt('Choose calendar provider (Google/Outlook):');
+    if (provider) {
+        alert(`Calendar sync with ${provider} will be implemented here`);
+    }
+}
+
+function requestReschedule() {
+    const caseId = prompt('Enter Case ID to reschedule:');
+    if (caseId) {
+        // Send reschedule request
+        fetch('/request_reschedule', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ caseId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Reschedule request sent successfully!');
+            } else {
+                alert('Error requesting reschedule: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error requesting reschedule: ' + error);
+        });
+    }
+}
+</script>
+
+<style>
+.form-input, .form-select, .form-textarea {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50;
+}
+</style>
+{% endblock %}

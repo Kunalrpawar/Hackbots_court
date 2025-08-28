@@ -3,61 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commercial Court - Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <title>Login - Court Case Prediction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-credentials {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .demo-credentials h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .demo-credentials p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .demo-credentials strong {
+            color: #667eea;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .flash-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .features {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .features h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .features ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .features li {
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .features li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
-        <a href="{{ url_for('welcome') }}" class="logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
-                <path d="m12 3 10 7.5-10 7.5L2 10.5 12 3"/>
-                <path d="M2 20.5 12 13l10 7.5"/>
-            </svg>
-            <span>Commercial Court</span>
-        </a>
-        <h1>Sign in to your account</h1>
-        <form class="login-form" action="{{ url_for('login') }}" method="POST">
+        <div class="logo">⚖️</div>
+        <h1 class="title">Court Case Prediction</h1>
+        <p class="subtitle">AI-Powered Legal Outcome Analysis</p>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('login') }}">
             <div class="form-group">
-                <label for="email">Email address</label>
-                <input type="email" id="email" name="email" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
             </div>
+            
             <div class="form-group">
                 <label for="password">Password</label>
-                <div class="password-input">
-                    <input type="password" id="password" name="password" required>
-                    <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                        <!-- Add your icon here -->
-                    </button>
-                </div>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
             </div>
-            <div class="form-group-inline">
-                <div>
-                    <input type="checkbox" id="remember-me" name="remember-me">
-                    <label for="remember-me">Remember me</label>
-                </div>
-                <a href="#forgot-password">Forgot your password?</a>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+            
+            <button type="submit" class="login-btn">Login</button>
         </form>
-        <div class="login-divider">
-            <span>Or continue with</span>
+        
+        <div class="demo-credentials">
+            <h4>Demo Credentials:</h4>
+            <p><strong>Admin User:</strong> admin / admin123</p>
+            <p><strong>Regular User:</strong> user / user123</p>
         </div>
-        <div class="social-login">
-            <button class="btn btn-outline btn-block">Google</button>
-            <button class="btn btn-outline btn-block">Microsoft</button>
+        
+        <div class="features">
+            <h4>System Features:</h4>
+            <ul>
+                <li>Machine Learning Case Predictions</li>
+                <li>AI-Powered Legal Analysis</li>
+                <li>IPC Section Recommendations</li>
+                <li>Professional Legal Templates</li>
+                <li>Secure JWT Authentication</li>
+            </ul>
         </div>
-        <p class="login-footer">
-            Not registered? <a href="#register">Create an account</a>
-        </p>
     </div>
-    <script>
-        // Add JavaScript to toggle password visibility
-        document.querySelector('.password-toggle').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            // Optionally toggle an icon here
-        });
-    </script>
 </body>
 </html>

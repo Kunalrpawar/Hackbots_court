@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Model - Court Case Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+    <style>
+        .ai-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .ai-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+            margin-top: 30px;
+        }
+        
+        .result-section {
+            margin-bottom: 25px;
+        }
+        
+        .result-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .result-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+            line-height: 1.6;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="{{ url_for('welcome') }}" class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                        <path d="m12 3 10 7.5-10 7.5L2 10.5 12 3"/>
+                        <path d="M2 20.5 12 13l10 7.5"/>
+                    </svg>
+                    <span>Commercial Court</span>
+                </a>
+                
+                <ul>
+                    <li><a href="{{ url_for('welcome') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                   
+                    <li><a href="{{ url_for('cases') }}">Cases</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    <li><a href="{{ url_for('ai_model') }}" class="active">AI Model</a></li>
+                </ul>
+                
+                <div class="user-info">
+                    <span class="user-welcome">Welcome, {{ session.get('username', 'User') }}!</span>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="ai-container">
+            <h1 class="form-title">🤖 AI-Powered Case Analysis</h1>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="ai-form">
+                <form id="aiAnalysisForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="case_id">Case ID</label>
+                            <input type="text" id="case_id" name="case_id" required placeholder="Enter case ID">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="case_type">Case Type</label>
+                            <select id="case_type" name="case_type" required>
+                                <option value="">Select case type</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Criminal">Criminal</option>
+                                <option value="Corporate">Corporate</option>
+                                <option value="Family">Family</option>
+                                <option value="Property">Property</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="plaintiff_name">Plaintiff Name</label>
+                            <input type="text" id="plaintiff_name" name="plaintiff_name" required placeholder="Enter plaintiff name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="defendant_name">Defendant Name</label>
+                            <input type="text" id="defendant_name" name="defendant_name" required placeholder="Enter defendant name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="plaintiff_args">Plaintiff's Arguments</label>
+                        <textarea id="plaintiff_args" name="plaintiff_args" rows="3" required placeholder="Describe plaintiff's arguments"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="defendant_args">Defendant's Arguments</label>
+                        <textarea id="defendant_args" name="defendant_args" rows="3" required placeholder="Describe defendant's arguments"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date_filed">Date Filed</label>
+                            <input type="date" id="date_filed" name="date_filed" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="judge_name">Judge Name</label>
+                            <input type="text" id="judge_name" name="judge_name" required placeholder="Enter judge name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="court_name">Court Name</label>
+                        <input type="text" id="court_name" name="court_name" required placeholder="Enter court name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="legal_principles">Legal Principles</label>
+                        <textarea id="legal_principles" name="legal_principles" rows="3" required placeholder="Describe applicable legal principles"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">🔍 Analyze Case with AI</button>
+                </form>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>AI is analyzing your case... This may take a few moments.</p>
+            </div>
+            
+            <!-- Results -->
+            <div id="results" class="results" style="display: none;">
+                <div class="result-section">
+                    <h3>📋 Applicable IPC Sections</h3>
+                    <div id="ipcResponse" class="result-content">
+                        <!-- IPC response will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="result-section">
+                    <h3>⚖️ AI Predicted Judgment</h3>
+                    <div id="judgmentResponse" class="result-content">
+                        <!-- Judgment response will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('aiAnalysisForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                if (response.ok) {
+                    // Show results
+                    document.getElementById('ipcResponse').innerHTML = data.ipc_response || 'No IPC sections predicted.';
+                    document.getElementById('judgmentResponse').innerHTML = data.response || 'No judgment predicted.';
+                    document.getElementById('results').style.display = 'block';
+                } else {
+                    // Show error
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    errorDiv.textContent = data.error || 'An error occurred during analysis.';
+                    document.querySelector('.ai-form').appendChild(errorDiv);
+                }
+                
+            } catch (error) {
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                // Show error
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = 'Network error. Please try again.';
+                document.querySelector('.ai-form').appendChild(errorDiv);
+            }
+        });
+    </script>
+</body>
+</html> 

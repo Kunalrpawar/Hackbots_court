@@ -1,0 +1,204 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">File a New Case</h1>
+    
+    <!-- Progress Steps -->
+    <div class="flex justify-between mb-8" id="progress-steps">
+        <div class="step active">Basic Info</div>
+        <div class="step">Party Details</div>
+        <div class="step">Case Details</div>
+        <div class="step">Documents</div>
+    </div>
+
+    <form id="caseFilingForm" class="max-w-3xl mx-auto">
+        <!-- Step 1: Basic Information -->
+        <div class="step-content" id="step1">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Case Title*</label>
+                <input type="text" name="caseTitle" class="form-input w-full" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Type of Case*</label>
+                <select name="caseType" class="form-select w-full" required>
+                    <option value="">Select Case Type</option>
+                    <option value="civil">Civil Case</option>
+                    <option value="commercial">Commercial Case</option>
+                    <option value="corporate">Corporate Case</option>
+                    <option value="bankruptcy">Bankruptcy</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Step 2: Party Details -->
+        <div class="step-content hidden" id="step2">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Plaintiff Name*</label>
+                <input type="text" name="plaintiffName" class="form-input w-full" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Defendant Name*</label>
+                <input type="text" name="defendantName" class="form-input w-full" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Lawyer Name*</label>
+                <input type="text" name="lawyerName" class="form-input w-full" required>
+            </div>
+        </div>
+
+        <!-- Step 3: Case Details -->
+        <div class="step-content hidden" id="step3">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Jurisdiction*</label>
+                <select name="jurisdiction" class="form-select w-full" required>
+                    <option value="">Select Jurisdiction</option>
+                    <option value="supreme">Supreme Court</option>
+                    <option value="high">High Court</option>
+                    <option value="district">District Court</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Case Description*</label>
+                <textarea name="caseDescription" class="form-textarea w-full h-32" required></textarea>
+            </div>
+        </div>
+
+        <!-- Step 4: Documents -->
+        <div class="step-content hidden" id="step4">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Upload Documents</label>
+                <input type="file" name="documents" multiple accept=".pdf,.doc,.docx,.jpg,.png" class="form-input w-full">
+                <p class="text-sm text-gray-600 mt-1">Supported formats: PDF, Word, Images (max 10MB each)</p>
+            </div>
+            <div id="uploaded-files" class="mt-4"></div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-6">
+            <button type="button" id="prevBtn" class="btn bg-gray-500 text-white px-6 py-2 rounded-lg hidden">Previous</button>
+            <div class="flex gap-4">
+                <button type="button" id="saveBtn" class="btn bg-blue-500 text-white px-6 py-2 rounded-lg">Save Draft</button>
+                <button type="button" id="nextBtn" class="btn bg-green-500 text-white px-6 py-2 rounded-lg">Next</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+.step {
+    @apply flex-1 text-center py-2 px-4 bg-gray-200 mx-1 rounded;
+}
+.step.active {
+    @apply bg-blue-500 text-white;
+}
+.form-input, .form-select, .form-textarea {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let currentStep = 1;
+    const totalSteps = 4;
+    const form = document.getElementById('caseFilingForm');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    
+    function updateSteps() {
+        // Hide all steps
+        document.querySelectorAll('.step-content').forEach(step => step.classList.add('hidden'));
+        // Show current step
+        document.getElementById(`step${currentStep}`).classList.remove('hidden');
+        
+        // Update progress indicators
+        document.querySelectorAll('.step').forEach((step, index) => {
+            if (index < currentStep) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+        
+        // Update buttons
+        prevBtn.classList.toggle('hidden', currentStep === 1);
+        nextBtn.textContent = currentStep === totalSteps ? 'Submit' : 'Next';
+    }
+    
+    nextBtn.addEventListener('click', function() {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateSteps();
+        } else {
+            submitForm();
+        }
+    });
+    
+    prevBtn.addEventListener('click', function() {
+        if (currentStep > 1) {
+            currentStep--;
+            updateSteps();
+        }
+    });
+    
+    saveBtn.addEventListener('click', function() {
+        const formData = new FormData(form);
+        // Save as draft
+        localStorage.setItem('caseDraft', JSON.stringify(Object.fromEntries(formData)));
+        alert('Draft saved successfully!');
+    });
+    
+    function submitForm() {
+        const formData = new FormData(form);
+        // Generate unique case ID
+        const caseId = 'CASE-' + Date.now();
+        formData.append('caseId', caseId);
+        
+        fetch('/submit_case', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Case filed successfully!\nCase ID: ${caseId}`);
+                window.location.href = '/cases';
+            } else {
+                alert('Error filing case: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error filing case: ' + error);
+        });
+    }
+    
+    // Load draft if exists
+    const draft = localStorage.getItem('caseDraft');
+    if (draft) {
+        const draftData = JSON.parse(draft);
+        Object.entries(draftData).forEach(([key, value]) => {
+            const input = form.elements[key];
+            if (input) input.value = value;
+        });
+    }
+    
+    // Initialize file upload preview
+    const fileInput = form.elements['documents'];
+    const fileList = document.getElementById('uploaded-files');
+    
+    fileInput.addEventListener('change', function() {
+        fileList.innerHTML = '';
+        Array.from(this.files).forEach(file => {
+            const fileDiv = document.createElement('div');
+            fileDiv.className = 'flex items-center gap-2 mb-2';
+            fileDiv.innerHTML = `
+                <span class="text-sm">${file.name}</span>
+                <span class="text-xs text-gray-500">(${(file.size / 1024).toFixed(1)} KB)</span>
+            `;
+            fileList.appendChild(fileDiv);
+        });
+    });
+});
+</script>
+{% endblock %}

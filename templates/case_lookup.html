@@ -1,0 +1,246 @@
+{% extends 'homepage.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Case Lookup</h1>
+    
+    <!-- Search Section -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Case ID</label>
+                <input type="text" id="searchCaseId" class="form-input w-full" placeholder="Enter Case ID">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Party Name</label>
+                <input type="text" id="searchParty" class="form-input w-full" placeholder="Enter Party Name">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Lawyer Name</label>
+                <input type="text" id="searchLawyer" class="form-input w-full" placeholder="Enter Lawyer Name">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Filing Date Range</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="date" id="dateFrom" class="form-input">
+                    <input type="date" id="dateTo" class="form-input">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="mt-4 flex flex-wrap gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Status</label>
+                <select id="statusFilter" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="active">Active</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                </select>
+            </div>
+            <div class="flex-grow"></div>
+            <button onclick="searchCases()" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
+                Search Cases
+            </button>
+        </div>
+    </div>
+    
+    <!-- Results Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lawyer</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody" class="bg-white divide-y divide-gray-200">
+                <!-- Results will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Case Details Modal -->
+    <div id="caseModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-3xl bg-white rounded-lg">
+            <div class="flex justify-between items-start">
+                <h2 class="text-xl font-bold" id="modalTitle">Case Details</h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <div class="mt-4" id="modalContent">
+                <!-- Case details will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-input, .form-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+</style>
+
+<script>
+// Dummy data for demonstration
+const mockCases = [
+    {
+        id: 'CASE-001',
+        title: 'Smith vs Johnson Corp',
+        lawyer: 'Jane Smith',
+        status: 'active',
+        lastUpdated: '2025-08-25',
+        details: {
+            plaintiff: 'John Smith',
+            defendant: 'Johnson Corporation',
+            filingDate: '2025-07-15',
+            description: 'Contract dispute regarding software development project',
+            hearings: [
+                { date: '2025-08-20', type: 'Initial Hearing' },
+                { date: '2025-09-15', type: 'Evidence Presentation' }
+            ]
+        }
+    },
+    {
+        id: 'CASE-002',
+        title: 'Tech Corp vs Innovate LLC',
+        lawyer: 'Michael Brown',
+        status: 'pending',
+        lastUpdated: '2025-08-27',
+        details: {
+            plaintiff: 'Tech Corporation',
+            defendant: 'Innovate LLC',
+            filingDate: '2025-08-10',
+            description: 'Patent infringement case',
+            hearings: [
+                { date: '2025-09-01', type: 'Preliminary Hearing' }
+            ]
+        }
+    }
+];
+
+function searchCases() {
+    const caseId = document.getElementById('searchCaseId').value.toLowerCase();
+    const party = document.getElementById('searchParty').value.toLowerCase();
+    const lawyer = document.getElementById('searchLawyer').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+    
+    // Filter mock cases based on search criteria
+    const results = mockCases.filter(c => {
+        const matchCaseId = !caseId || c.id.toLowerCase().includes(caseId);
+        const matchParty = !party || 
+            c.details.plaintiff.toLowerCase().includes(party) || 
+            c.details.defendant.toLowerCase().includes(party);
+        const matchLawyer = !lawyer || c.lawyer.toLowerCase().includes(lawyer);
+        const matchStatus = !status || c.status === status;
+        const matchDate = (!dateFrom || c.details.filingDate >= dateFrom) && 
+                         (!dateTo || c.details.filingDate <= dateTo);
+        
+        return matchCaseId && matchParty && matchLawyer && matchStatus && matchDate;
+    });
+    
+    displayResults(results);
+}
+
+function displayResults(cases) {
+    const tbody = document.getElementById('resultsBody');
+    tbody.innerHTML = '';
+    
+    cases.forEach(c => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50 cursor-pointer';
+        row.onclick = () => showCaseDetails(c);
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">${c.id}</td>
+            <td class="px-6 py-4">${c.title}</td>
+            <td class="px-6 py-4">${c.lawyer}</td>
+            <td class="px-6 py-4">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                    ${getStatusColor(c.status)}">
+                    ${c.status}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">${c.lastUpdated}</td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+function getStatusColor(status) {
+    switch(status) {
+        case 'active': return 'bg-green-100 text-green-800';
+        case 'pending': return 'bg-yellow-100 text-yellow-800';
+        case 'resolved': return 'bg-blue-100 text-blue-800';
+        case 'closed': return 'bg-gray-100 text-gray-800';
+        default: return 'bg-gray-100 text-gray-800';
+    }
+}
+
+function showCaseDetails(caseData) {
+    const modal = document.getElementById('caseModal');
+    const content = document.getElementById('modalContent');
+    
+    content.innerHTML = `
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <h3 class="font-semibold">Plaintiff</h3>
+                <p>${caseData.details.plaintiff}</p>
+            </div>
+            <div>
+                <h3 class="font-semibold">Defendant</h3>
+                <p>${caseData.details.defendant}</p>
+            </div>
+            <div>
+                <h3 class="font-semibold">Filing Date</h3>
+                <p>${caseData.details.filingDate}</p>
+            </div>
+            <div>
+                <h3 class="font-semibold">Status</h3>
+                <p>${caseData.status}</p>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h3 class="font-semibold">Case Description</h3>
+            <p>${caseData.details.description}</p>
+        </div>
+        
+        <div class="mt-4">
+            <h3 class="font-semibold">Hearings</h3>
+            <ul class="list-disc list-inside">
+                ${caseData.details.hearings.map(h => 
+                    `<li>${h.date} - ${h.type}</li>`
+                ).join('')}
+            </ul>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('caseModal').classList.add('hidden');
+}
+
+// Initialize with all cases
+document.addEventListener('DOMContentLoaded', () => {
+    displayResults(mockCases);
+});
+</script>
+{% endblock %}

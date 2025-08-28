@@ -4,34 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Court Case Outcome Prediction</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+    <style>
+        .prediction-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background: #0056b3;
+        }
+        
+        .prediction-result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Court Case Outcome Prediction</h1>
-
-    <form method="POST">
-        <label for="case_title">Case Title:</label><br>
-        <input type="text" id="case_title" name="case_title" required><br>
-
-        <label for="date_filed">Date Filed:</label><br>
-        <input type="date" id="date_filed" name="date_filed" required><br>
-
-        <label for="case_type">Case Type:</label><br>
-        <input type="text" id="case_type" name="case_type" required><br>
-
-        <label for="plaintiff">Plaintiff:</label><br>
-        <input type="text" id="plaintiff" name="plaintiff" required><br>
-
-        <label for="defendant">Defendant:</label><br>
-        <input type="text" id="defendant" name="defendant" required><br><br>
-
-        <input type="submit" value="Predict Outcome">
-    </form>
-
-    {% if prediction %}
-    <h2>Prediction</h2>
-    <p>{{ prediction }}</p>
-    {% endif %}
-
+    <div class="container">
+        <h1>🏛️ Court Case Outcome Prediction</h1>
+        <p class="subtitle">Enter case details to get AI-powered outcome predictions</p>
+        
+        <div class="prediction-form">
+            <form method="POST" action="{{ url_for('ml_predict') }}">
+                <div class="form-group">
+                    <label for="case_type">Case Type:</label>
+                    <select id="case_type" name="case_type" required>
+                        <option value="">Select case type</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Criminal">Criminal</option>
+                        <option value="Corporate">Corporate</option>
+                        <option value="Family">Family</option>
+                        <option value="Property">Property</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="court_name">Court Name:</label>
+                    <input type="text" id="court_name" name="court_name" placeholder="e.g., Supreme Court, High Court" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="plaintiff_name">Plaintiff:</label>
+                    <input type="text" id="plaintiff_name" name="plaintiff_name" placeholder="Enter plaintiff name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="defendant_name">Defendant:</label>
+                    <input type="text" id="defendant_name" name="defendant_name" placeholder="Enter defendant name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date_filed">Date Filed:</label>
+                    <input type="date" id="date_filed" name="date_filed" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Predict Outcome</button>
+            </form>
+            
+            {% if error %}
+            <div class="error-message">
+                <strong>Error:</strong> {{ error }}
+            </div>
+            {% endif %}
+            
+            {% if prediction %}
+            <div class="prediction-result">
+                <h3>🤖 ML Model Prediction</h3>
+                <p><strong>Predicted Outcome:</strong> {{ prediction }}</p>
+                <p class="note">This prediction is based on historical case data analysis.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="info-section">
+            <h3>📋 How it works:</h3>
+            <ol>
+                <li>Fill in the case details above</li>
+                <li>Click "Predict Outcome" to get ML-based prediction</li>
+                <li>For AI-powered analysis, visit the <a href="{{ url_for('ai_model') }}">AI Model</a> page</li>
+            </ol>
+            
+            <div class="features">
+                <h3>✨ Features:</h3>
+                <ul>
+                    <li>Machine Learning predictions based on historical data</li>
+                    <li>AI-powered case analysis and judgment generation</li>
+                    <li>IPC section recommendations</li>
+                    <li>Professional legal document templates</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
