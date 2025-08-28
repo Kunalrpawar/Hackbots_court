@@ -48,44 +48,33 @@
                         <thead>
                             <tr>
                                 <th>Case Number</th>
+                                <th>Case Type</th>
                                 <th>Parties</th>
                                 <th>Filed Date</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><a href="#case-2023-001">2023-001</a></td>
-                                <td>Mahindra Motors</td>
-                                <td>2023-05-15</td>
-                                <td>Ongoing</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#case-2023-002">2023-002</a></td>
-                                <td>Tech Innovations Inc</td>
-                                <td>2023-05-20</td>
-                                <td>Scheduled</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#case-2023-003">2023-003</a></td>
-                                <td>Green Energy Co. v. Power Distributors</td>
-                                <td>2023-05-22</td>
-                                <td>Resolved</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#case-2023-004">2023-004</a></td>
-                                <td>Financial Services Ltd. v. Investment Bank</td>
-                                <td>2023-05-25</td>
-                                <td>Ongoing</td>
-                            </tr>
-                            <tr>
-                                <td><a href="#case-2023-005">2023-005</a></td>
-                                <td>Retail Chain Inc. v. Supplier Group</td>
-                                <td>2023-05-28</td>
-                                <td>Scheduled</td>
-                            </tr>
+                            {% if cases %}
+                                {% for case in cases %}
+                                <tr>
+                                    <td><a href="#case-{{ case.get('case_number', 'N/A') }}">{{ case.get('case_number', 'N/A') }}</a></td>
+                                    <td>{{ case.get('case_type', 'N/A') }}</td>
+                                    <td>{{ case.get('plaintiff', 'N/A') }} v. {{ case.get('defendant', 'N/A') }}</td>
+                                    <td>{{ case.get('filing_date', 'N/A').strftime('%Y-%m-%d') if case.get('filing_date') else 'N/A' }}</td>
+                                    <td data-status="{{ case.get('status', 'pending') | lower }}">{{ case.get('status', 'N/A') | title }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="no-cases">No cases found</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
+                    <script>
+                        console.log('Cases:', {{ cases | tojson | safe }});
+                    </script>
                 </div>
 
                 <div class="case-resources">

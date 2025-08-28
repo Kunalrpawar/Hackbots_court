@@ -49,6 +49,22 @@
             font-size: 1rem;
         }
 
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #764ba2;
+        }
+
         .form-group {
             margin-bottom: 20px;
             text-align: left;
@@ -211,13 +227,12 @@
             </div>
             
             <button type="submit" class="login-btn">Login</button>
+            <div class="links">
+                <a href="{{ url_for('register') }}">Don't have an account? Register here</a>
+            </div>
         </form>
         
-        <div class="demo-credentials">
-            <h4>Demo Credentials:</h4>
-            <p><strong>Admin User:</strong> admin / admin123</p>
-            <p><strong>Regular User:</strong> user / user123</p>
-        </div>
+       
         
         <div class="features">
             <h4>System Features:</h4>

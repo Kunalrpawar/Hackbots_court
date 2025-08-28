@@ -69,10 +69,7 @@ This provides an interactive menu to:
 python app.py
 ```
 
-#### Option C: Run Streamlit App
-```bash
-streamlit run streamlit_app.py
-```
+
 
 ## 🔐 Authentication System
 

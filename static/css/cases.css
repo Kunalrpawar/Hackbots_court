@@ -160,6 +160,42 @@ body {
   .case-table a:hover {
     text-decoration: underline;
   }
+
+  .no-cases {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-style: italic;
+  }
+
+  .case-table td[data-status] {
+    position: relative;
+  }
+
+  .case-table td[data-status]::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+
+  .case-table td[data-status="ongoing"]::before {
+    background-color: #ffc107;
+  }
+
+  .case-table td[data-status="resolved"]::before {
+    background-color: #28a745;
+  }
+
+  .case-table td[data-status="scheduled"]::before {
+    background-color: #17a2b8;
+  }
+
+  .case-table td[data-status="pending"]::before {
+    background-color: #dc3545;
+  }
   
   .case-resources h2 {
     color: #1a73e8;

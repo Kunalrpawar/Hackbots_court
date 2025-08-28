@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Details - Court Case Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+    <style>
+        .prediction-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 1000px;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section h3 {
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            color: #4a5568;
+        }
+
+        .prediction-text {
+            white-space: pre-wrap;
+            font-family: 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-completed { background: #c6f6d5; color: #22543d; }
+        .status-pending { background: #fefcbf; color: #744210; }
+        .status-error { background: #fed7d7; color: #822727; }
+    </style>
+</head>
+<body>
+    <div class="prediction-container">
+        <div class="section">
+            <h2>Case Details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Case ID</div>
+                    <div class="detail-value">{{ prediction.case_id }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Case Type</div>
+                    <div class="detail-value">{{ prediction.case_type }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="status-badge status-{{ prediction.status }}">
+                        {{ prediction.status | title }}
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Date Filed</div>
+                    <div class="detail-value">{{ prediction.date_filed }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Parties</h3>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Plaintiff</div>
+                    <div class="detail-value">{{ prediction.plaintiff_name }}</div>
+                    <div class="detail-label">Arguments</div>
+                    <div class="detail-value">{{ prediction.plaintiff_args }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Defendant</div>
+                    <div class="detail-value">{{ prediction.defendant_name }}</div>
+                    <div class="detail-label">Arguments</div>
+                    <div class="detail-value">{{ prediction.defendant_args }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Legal Analysis</h3>
+            <div class="prediction-text">
+                <h4>IPC Sections Analysis</h4>
+                {{ prediction.ipc_analysis | safe }}
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Judgment Prediction</h3>
+            <div class="prediction-text">
+                {{ prediction.judgment_prediction | safe }}
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Additional Information</h3>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Judge Name</div>
+                    <div class="detail-value">{{ prediction.judge_name }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Court Name</div>
+                    <div class="detail-value">{{ prediction.court_name }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Legal Principles</div>
+                    <div class="detail-value">{{ prediction.legal_principles }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Prediction Date</div>
+                    <div class="detail-value">{{ prediction.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

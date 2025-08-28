@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Court Case Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+    <div class="register-container">
+        <div class="form-header">
+            <h2>Create Account</h2>
+            <p>Join the Court Case Management System</p>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required minlength="3" maxlength="30"
+                    pattern="[a-zA-Z0-9_-]+" title="Username can only contain letters, numbers, underscore and hyphen">
+                <div class="password-requirements">
+                    Username must be 3-30 characters long and can only contain letters, numbers, underscore and hyphen
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="8"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    title="Must contain at least one number, one uppercase and lowercase letter, and be at least 8 characters long">
+                <div class="password-requirements">
+                    Password must be at least 8 characters long and contain:
+                    <ul>
+                        <li>At least one uppercase letter</li>
+                        <li>At least one lowercase letter</li>
+                        <li>At least one number</li>
+                    </ul>
+                </div>
+            </div>
+            <button type="submit">Create Account</button>
+            <div class="links">
+                <a href="{{ url_for('login') }}">Already have an account? Login here</a>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            if (password.length < 8) {
+                e.preventDefault();
+                alert('Password must be at least 8 characters long');
+                return;
+            }
+            if (!/[A-Z]/.test(password)) {
+                e.preventDefault();
+                alert('Password must contain at least one uppercase letter');
+                return;
+            }
+            if (!/[a-z]/.test(password)) {
+                e.preventDefault();
+                alert('Password must contain at least one lowercase letter');
+                return;
+            }
+            if (!/\d/.test(password)) {
+                e.preventDefault();
+                alert('Password must contain at least one number');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

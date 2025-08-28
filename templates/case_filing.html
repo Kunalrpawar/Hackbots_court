@@ -12,7 +12,7 @@
         <div class="step">Documents</div>
     </div>
 
-    <form id="caseFilingForm" class="max-w-3xl mx-auto">
+                <form id="caseFilingForm" method="POST" action="{{ url_for('submit_case_filing') }}" enctype="multipart/form-data" onsubmit="console.log('Form submitted')">
         <!-- Step 1: Basic Information -->
         <div class="step-content" id="step1">
             <div class="mb-4">
