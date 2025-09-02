@@ -260,14 +260,3 @@ This project is for educational and research purposes. Always consult qualified 
 4. Test thoroughly
 5. Submit a pull request
 
-## 📞 Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the code comments
-3. Check system status with `python main.py` option 5
-4. Verify authentication credentials
-
----
-
-**Note**: This system is designed for educational purposes and should not replace professional legal consultation. 
